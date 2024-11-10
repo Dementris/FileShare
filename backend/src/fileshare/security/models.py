@@ -1,13 +1,15 @@
-from lib2to3.btm_utils import tokens
+from datetime import datetime
 
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, DateTime, func, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
-from fileshare.auth.models import User
 from fileshare.database.core import Base
 
 class Token(Base):
     __tablename__ = 'token'
-    id: Mapped[int] = mapped_column(index=True, auto_increment=True)
+    id: Mapped[str] = mapped_column(UUID(as_uuid=True), primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
-    user: Mapped[User] = relationship(back_populates=tokens)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    revoked: Mapped[bool] = mapped_column(default=False)
+
+    user: Mapped["User"] = relationship(back_populates="tokens") # noqa

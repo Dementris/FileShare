@@ -3,12 +3,22 @@ name = "backend"
 version = "0.1.0"
 description = ""
 authors = ["Dmytro Shlapak <bdlap.shl@gmail.com>"]
+package-mode = false
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
 fastapi = {extras = ["all"], version = "^0.115.4"}
+sqlalchemy = "^2.0.36"
+alembic = "^1.14.0"
+aiosqlite = "^0.20.0"
+pyjwt = "^2.9.0"
+python-jose = "^3.3.0"
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.7.2"
 
 [build-system]
 requires = ["poetry-core"]
