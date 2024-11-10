@@ -12,6 +12,9 @@ class UserLoginSchema(FileShareBase):
     email: EmailStr
     password: str
 
+class UserLogoutSchema(FileShareBase):
+    message: str = "User successfully logged out."
+
 
 class UserCreateSchema(UserLoginSchema):
     username: str

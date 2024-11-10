@@ -16,7 +16,7 @@ class ErrorResponse(BaseModel):
 
 app = FastAPI(debug=True, root_path="/api/v1")
 
-app.include_router(auth_router, prefix="/auth")
-app.include_router(user_router, prefix="/user")
+app.include_router(auth_router, prefix="/auth", tags=["auth"])
+app.include_router(user_router, prefix="/users", tags=["user"])
 
 
