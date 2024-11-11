@@ -24,4 +24,8 @@ class User(Base):
     )
     disabled: Mapped[bool] = mapped_column(default=False, nullable=False)
 
-    tokens: Mapped[List["Token"]] = relationship(back_populates="user")# noqa
+    tokens: Mapped[List["Token"]] = relationship("Token", back_populates="user")  # noqa
+    files: Mapped[List["File"]] = relationship("File", back_populates="owner")  # noqa
+
+    shared_files: Mapped[List["File"]] = relationship("File", secondary="files_permissions", # noqa
+                                                      back_populates="user_with_access")

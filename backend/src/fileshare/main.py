@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 
 from fileshare.auth.routes import auth_router, user_router
-
+from fileshare.files.routes import file_router
 
 class ErrorMessage(BaseModel):
     msg: str
@@ -18,5 +18,5 @@ app = FastAPI(debug=True, root_path="/api/v1")
 
 app.include_router(auth_router, prefix="/auth", tags=["auth"])
 app.include_router(user_router, prefix="/users", tags=["user"])
-
+app.include_router(file_router, prefix="/files", tags=["files"])
 
