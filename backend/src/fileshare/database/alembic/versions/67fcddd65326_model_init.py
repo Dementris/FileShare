@@ -1,8 +1,8 @@
 """Model init
 
-Revision ID: d758421094f8
+Revision ID: 67fcddd65326
 Revises: 
-Create Date: 2024-11-11 01:50:49.768619
+Create Date: 2024-11-11 23:37:49.828144
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'd758421094f8'
+revision: str = '67fcddd65326'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -37,12 +37,13 @@ def upgrade() -> None:
     op.create_table('files',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
+    sa.Column('content_type', sa.String(), nullable=False),
     sa.Column('type', sa.String(), nullable=False),
     sa.Column('location', sa.String(), nullable=False),
     sa.Column('size', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
     sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
-    sa.Column('accessed_at', sa.DateTime(timezone=True), nullable=False),
+    sa.Column('accessed_at', sa.DateTime(timezone=True), nullable=True),
     sa.Column('deleted', sa.Boolean(), nullable=False),
     sa.Column('owner_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['owner_id'], ['users.id'], ),

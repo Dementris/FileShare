@@ -55,5 +55,5 @@ class PermissionDependency:
         return await self.permission_class().initialize(user)
 
 
-AuthenticatedPermissionsDependency = Annotated[UserSchema, Depends(PermissionDependency(AllPermissions))]
-AdminPermissionDependency = Annotated[UserSchema, Depends(PermissionDependency(AdminPermission))]
+AuthenticatedPermissionsDependency = Depends(PermissionDependency(AllPermissions))
+AdminPermissionDependency = Depends(PermissionDependency(AdminPermission))

@@ -1,20 +1,31 @@
+import os
 from abc import ABC, abstractmethod
+from pathlib import Path
 
 
 class AbstractStorage(ABC):
+    path = None
 
     @abstractmethod
-    def download(self, file):
+    def get_file(self, file):
         pass
 
     @abstractmethod
-    def upload(self, file):
+    def save_file(self, file, container):
         pass
 
     @abstractmethod
-    def delete(self, file):
+    def delete_file(self, file):
         pass
 
-    @abstractmethod
-    def list_files(self):
+class FileStorage(AbstractStorage):
+    path = Path(__file__).parent.absolute()
+
+    def get_file(self, file):
+        pass
+
+    def save_file(self, file, container):
+        pass
+
+    def delete_file(self, file_path):
         pass

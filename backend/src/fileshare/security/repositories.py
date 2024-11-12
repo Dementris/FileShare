@@ -26,7 +26,7 @@ class TokenRepository:
                     (
                     (self._model.user_id == user_id) &
                     (self._model.expires_at >= datetime.now(timezone.utc).replace(tzinfo=None)) &
-                    (self._model.revoked == False) # noqa
+                    (~self._model.revoked)
                 )
                 .values(revoked=True)
                 .returning(self._model.id))

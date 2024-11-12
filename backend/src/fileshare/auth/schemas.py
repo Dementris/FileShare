@@ -35,7 +35,13 @@ class UserSchema(FileShareBase):
     updated_at: datetime
     disabled: bool
 
+class UserResponseSchema(FileShareBase):
+    id: int
+    username: str
+    email: EmailStr
+    role: Roles
+    created_at: datetime
+    updated_at: datetime
 
-class UserResponseSchema(UserSchema):
+class UserLoginResponseSchema(UserResponseSchema):
     token: TokenResponseSchema
-    password: SecretStr = Field(exclude=True)
