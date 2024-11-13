@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from typing import List
 
 from pydantic_core.core_schema import model_schema
@@ -51,7 +52,7 @@ class FilesRepository:
             selectinload(self._model.owner))
         result = await self._session.execute(stmt)
         file = result.scalar_one_or_none()
-        return FileSchema.model_validate(file) if file else None
+        return FileSchema(**file.__dict__, permission=Permissions.DOWNLOAD) if file else None
 
     async def get_file_by_id_and_user(self, file_id, user_id):
         stmt = (select(self._model)
@@ -61,6 +62,12 @@ class FilesRepository:
         result = await self._session.execute(stmt)
         file = result.scalar_one_or_none()
         return FileSchema(**file.__dict__, permission=Permissions.DOWNLOAD) if file else None
+
+    async def update_accessed(self, file_id):
+        stmt = select(self._model).where((self._model.id == file_id) & (~self._model.deleted))
+        result = await self._session.execute(stmt)
+        result.scalar_one_or_none().accessed_at = datetime.now(timezone.utc)
+        await self._session.commit()
 
 
 class FilePermissionsRepository:

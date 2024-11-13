@@ -9,7 +9,7 @@ def encrypt_content(content: bytes, key):
 
 def decrypt_content(content: bytes, key):
     fernet = Fernet(key)
-    return fernet.encrypt(content)
+    return fernet.decrypt(content)
 
 def name_generator():
     unique_id = uuid.uuid4()

@@ -1,4 +1,3 @@
-from importlib.metadata import files
 from typing import Annotated
 
 from fastapi import HTTPException
@@ -7,10 +6,8 @@ from fastapi.params import Depends
 from fileshare.auth.constants import Roles
 from fileshare.auth.repositories import UserRepository
 from fileshare.auth.schemas import UserSchema
-from fileshare.auth.service import UserService
-from fileshare.files.constants import Permissions
 from fileshare.files.repositories import FilesRepository, FilePermissionsRepository
-from fileshare.files.schemas import FileIn, FileResponseSchema, FileSchema
+from fileshare.files.schemas import FileIn, FileResponseSchema
 from fileshare.storage.core import FileStorage
 
 
@@ -39,7 +36,6 @@ class FilesService:
             files = await self._file_repository.get_files_by_user_access(user.id)
             return [FileResponseSchema(**file.model_dump()) for file in files]
 
-
     async def give_permissions(self, file_id, user_id):
         user = await self._user_repository.get_user_by_id(user_id)
         if not user:
@@ -63,8 +59,9 @@ class FilesService:
             file = await self._file_repository.get_file_by_id(file_id)
         else:
             file = await self._file_repository.get_file_by_id_and_user(file_id, user.id)
-
         if not file:
             raise HTTPException(status_code=404, detail='File not found or you do not have permission')
-        else:
-            return self._storage.get_file(file.location)
+        path = self._storage.get_file(file.location)
+        if not path:
+            raise HTTPException(status_code=404, detail='File not found')
+        return file, path

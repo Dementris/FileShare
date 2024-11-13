@@ -36,10 +36,8 @@ async def remove_permissions(file_id: int, user_id: int, service: FilesService):
 async def download_file(file_id: Annotated[int, "File id"],
                         user: Annotated[UserSchema, AuthenticatedPermissionsDependency],
                         service: FilesService):
-    file_content = await service.get_file(file_id, user)
-    return StreamingResponse(file_content, media_type="application/octet-stream",
-                             headers={"Content-Disposition": "attachment; filename=test.mp4"})
-
+    file, path = await service.get_file(file_id, user)
+    return FileResponse(path, media_type=file.content_type, filename=file.name)
 
 @file_router.post("/upload", status_code=201)
 async def upload_file(file: UploadFile, user: Annotated[UserSchema, AdminPermissionDependency], service: FilesService):
