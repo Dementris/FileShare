@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, UploadFile
 from fastapi.params import Depends
+from starlette.responses import StreamingResponse
 
 from fileshare.auth.permissions import AdminPermissionDependency, AuthenticatedPermissionsDependency
 from fileshare.auth.schemas import UserSchema
@@ -24,18 +25,20 @@ async def give_permissions(file_id: int, user_id: int, service: FilesService):
     await service.give_permissions(file_id, user_id)
     return {"message": "Permissions given to user {} ".format(user_id)}
 
+
 @file_router.delete("/permissions/{file_id}/{user_id}", dependencies=[AdminPermissionDependency])
 async def remove_permissions(file_id: int, user_id: int, service: FilesService):
     await service.remove_permissions(file_id, user_id)
     return {"message": "Permissions removed from user {} ".format(user_id)}
+
 
 @file_router.get("/download/{file_id}")
 async def download_file(file_id: Annotated[int, "File id"],
                         user: Annotated[UserSchema, AuthenticatedPermissionsDependency],
                         service: FilesService):
     file_content = await service.get_file(file_id, user)
-    # return FileResponse(file.location, media_type=file.content_type)
-    pass
+    return StreamingResponse(file_content, media_type="application/octet-stream",
+                             headers={"Content-Disposition": "attachment; filename=test.mp4"})
 
 
 @file_router.post("/upload", status_code=201)

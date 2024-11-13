@@ -59,8 +59,12 @@ class FilesService:
         await self._permissions_repository.delete_permission_from_user(file_id, user_id)
 
     async def get_file(self, file_id, user: UserSchema):
-        file = await self._file_repository.get_file_by_id_and_user(file_id)
+        if user.role is Roles.ADMIN:
+            file = await self._file_repository.get_file_by_id(file_id)
+        else:
+            file = await self._file_repository.get_file_by_id_and_user(file_id, user.id)
+
         if not file:
             raise HTTPException(status_code=404, detail='File not found or you do not have permission')
-
-        pass
+        else:
+            return self._storage.get_file(file.location)

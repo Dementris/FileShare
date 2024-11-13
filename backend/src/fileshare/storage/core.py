@@ -12,12 +12,16 @@ from fileshare.storage.utils import encrypt_content, decrypt_content, name_gener
 class FileStorage:
     def __init__(self):
         self.path = Path(storage_settings.DATA_PATH).absolute()
+        self.tmp_path = Path("./tmp").absolute()
 
-    def get_file(self, file_path) -> bytes | None:
+    def get_file(self, file_path):
         file = self.path.joinpath(file_path)
         if file.is_file():
             file_data = decrypt_content(file.read_bytes(), key=storage_settings.SECRET_KEY)
-            return file_data
+            tmp_file = self.path.joinpath("dl"+name_generator())
+            tmp_file.parent.mkdir(parents=True, exist_ok=True)
+            tmp_file.write_bytes(file_data)
+            return tmp_file
         else:
             return None
 

@@ -55,9 +55,12 @@ class FilesRepository:
 
     async def get_file_by_id_and_user(self, file_id, user_id):
         stmt = (select(self._model)
-        .where((self._model.id == file_id) & (self._model.deleted) & (self._model.user_with_access.any(id=user_id)))
-        .options(joinedload(self._model.user_with_access.and_(self._model.user_with_access.any(id=user_id)), inner=True)))
-        pass
+        .where((self._model.id == file_id) & (~self._model.deleted) & (self._model.user_with_access.any(id=user_id)))
+        .options(selectinload(self._model.owner))
+        .options(selectinload(self._model.user_with_access.and_(self._model.user_with_access.any(id=user_id)))))
+        result = await self._session.execute(stmt)
+        file = result.scalar_one_or_none()
+        return FileSchema(**file.__dict__, permission=Permissions.DOWNLOAD) if file else None
 
 
 class FilePermissionsRepository:
