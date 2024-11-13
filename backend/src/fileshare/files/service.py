@@ -26,8 +26,7 @@ class FilesService:
         self._user_repository = user_repository
 
     async def upload_file(self, file: FileIn):
-        # TODO: Save file in local storage and return link to file
-        file.location = "Dummy Location"
+        file.location = self._storage.save_file(file.content).__str__()
         if not file.location:
             raise HTTPException(400, "Provide a location")
         return await self._file_repository.create(file)
@@ -58,3 +57,10 @@ class FilesService:
         if not permission:
             raise HTTPException(status_code=403, detail='Permission not found')
         await self._permissions_repository.delete_permission_from_user(file_id, user_id)
+
+    async def get_file(self, file_id, user: UserSchema):
+        file = await self._file_repository.get_file_by_id_and_user(file_id)
+        if not file:
+            raise HTTPException(status_code=404, detail='File not found or you do not have permission')
+
+        pass

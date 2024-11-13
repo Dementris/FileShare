@@ -33,12 +33,14 @@ async def remove_permissions(file_id: int, user_id: int, service: FilesService):
 async def download_file(file_id: Annotated[int, "File id"],
                         user: Annotated[UserSchema, AuthenticatedPermissionsDependency],
                         service: FilesService):
+    file_content = await service.get_file(file_id, user)
     # return FileResponse(file.location, media_type=file.content_type)
     pass
 
 
 @file_router.post("/upload", status_code=201)
 async def upload_file(file: UploadFile, user: Annotated[UserSchema, AdminPermissionDependency], service: FilesService):
-    file_in = FileIn(owner_id=user.id, **file.__dict__, content_type=file.content_type)
+    file_content = await file.read()
+    file_in = FileIn(owner_id=user.id, **file.__dict__, content_type=file.content_type, content=file_content)
     response = await service.upload_file(file_in)
     return {"massage": f"File successfully uploaded: {response}"}

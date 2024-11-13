@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import BinaryIO
 
 from pydantic import Field, AliasChoices, computed_field
 
@@ -50,6 +51,8 @@ class FileIn(FileShareBase):
     location: str = None
     size: int
     owner_id: int
+
+    content: bytes = Field(exclude=True)
 
     @computed_field(return_type=str)
     @property

@@ -53,6 +53,12 @@ class FilesRepository:
         file = result.scalar_one_or_none()
         return FileSchema.model_validate(file) if file else None
 
+    async def get_file_by_id_and_user(self, file_id, user_id):
+        stmt = (select(self._model)
+        .where((self._model.id == file_id) & (self._model.deleted) & (self._model.user_with_access.any(id=user_id)))
+        .options(joinedload(self._model.user_with_access.and_(self._model.user_with_access.any(id=user_id)), inner=True)))
+        pass
+
 
 class FilePermissionsRepository:
     def __init__(self, session: DBSession):
