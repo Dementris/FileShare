@@ -33,6 +33,9 @@ async def remove_permissions(file_id: int, user_id: int, service: FilesService):
     await service.remove_permissions(file_id, user_id)
     return {"message": "Permissions removed from user {} ".format(user_id)}
 
+@file_router.get("/files/permissions/users/")
+async def users_with_permissions(file_id: int, service: FilesService):
+    return await service.get_users_with_permission(file_id)
 
 @file_router.get("/download/{file_id}")
 async def download_file(file_id: Annotated[int, "File id"],
@@ -68,3 +71,7 @@ async def upload_file(files: list[UploadFile], user: Annotated[UserSchema, Admin
         await service.upload_file(file_in)
 
     return {"massage": f"Files successfully uploaded"}
+
+@file_router.delete("/{file_id}", status_code=204)
+async def delete_file(file_id: int, service: FilesService):
+    await service.delete_file(file_id)

@@ -1,5 +1,4 @@
 import axios from 'axios';
-import {useNavigate} from "react-router-dom";
 
 const api = axios.create({
     baseURL: 'http://127.0.0.1:8000/api/v1',
@@ -17,7 +16,6 @@ api.interceptors.response.use(
     (response) => response,
     async (error) => {
         const originalRequest = error.config;
-        const navigate = useNavigate();
 
         if (error.response && error.response.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
@@ -41,12 +39,13 @@ api.interceptors.response.use(
                     console.error('Refresh token failed', refreshError);
                     localStorage.removeItem('accessToken');
                     localStorage.removeItem('refreshToken');
-                    navigate("/login")
+                    window.location.href = "/login"; // Redirect to login page
                 }
             }
         }
         return Promise.reject(error);
     }
 );
+
 
 export default api;

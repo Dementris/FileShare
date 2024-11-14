@@ -1,13 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import {
-    Card,
-    CardContent,
-    CardActions,
-    Typography,
+    Box,
     Button,
-    Grid,
+    Card,
+    CardActions,
+    CardContent,
     CircularProgress,
-    Box, IconButton,
+    Grid,
+    IconButton,
+    Typography,
 } from '@mui/material';
 import ImageIcon from '@mui/icons-material/Image';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
@@ -56,8 +57,12 @@ const FileDashboard: React.FC = () => {
     const [files, setFiles] = useState<File[]>([]);
     const [loading, setLoading] = useState(true);
     const [openPopup, setOpenPopup] = useState(false);
+    const [selectedFileId, setSelectedFileId] = useState<number | null>(null);
 
-    const handleOpenPopup = () => setOpenPopup(true);
+    const handleOpenPopup = (fileId: number) => {
+        setSelectedFileId(fileId);
+        setOpenPopup(true)
+    };
     const handleClosePopup = () => setOpenPopup(false);
     const role = localStorage.getItem("role")
 
@@ -87,7 +92,7 @@ const FileDashboard: React.FC = () => {
             if (response.status === 200) {
                 const link = document.createElement('a');
                 link.href = response.data.downloadUrl;
-                link.setAttribute('download', "" );
+                link.setAttribute('download', "");
                 document.body.appendChild(link);
                 link.click();
 
@@ -100,6 +105,18 @@ const FileDashboard: React.FC = () => {
             console.error('Error downloading file:', error);
         }
     };
+
+    const handleDelete = async (fileId: number) => {
+        try {
+            const response = await api.delete(`files/${fileId}`)
+            if (response.status === 204){
+                window.location.reload()
+            }
+        }catch (error){
+            console.error('Error deleting file:', error);
+        }
+    }
+
     if (loading) {
         return (
             <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
@@ -120,7 +137,9 @@ const FileDashboard: React.FC = () => {
                         <Card>
                             <CardActions style={{justifyContent: 'flex-end'}}>
                                 {role === 'admin' && (
-                                    <IconButton size="small" variant="delete" sx={{
+                                    <IconButton size="small"
+                                                onClick={() => handleDelete(file.id)}
+                                                sx={{
                                         color: '#f44336', // Red color
                                         backgroundColor: 'rgba(244, 67, 54, 0.1)',
                                         '&:hover': {
@@ -164,11 +183,11 @@ const FileDashboard: React.FC = () => {
                                 )}
                                 {role === 'admin' && (
                                     <Box>
-                                        <Button variant="outlined" onClick={handleOpenPopup}>
+                                        <Button variant="outlined" onClick={() => handleOpenPopup(file.id)}>
                                             Manage Permissions
                                         </Button>
                                         <UserPermissionPopup open={openPopup} onClose={handleClosePopup}
-                                                             file_id={file.id}/>
+                                                             fileId={selectedFileId}/>
                                     </Box>
                                 )
                                 }

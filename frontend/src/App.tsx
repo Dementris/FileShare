@@ -8,6 +8,7 @@ import Signup from "./pages/Signup.tsx";
 import Navbar from "./components/Navbar.tsx";
 import FilesPage from "./pages/FilesPage.tsx";
 import RegistrationSuccessPage from "./pages/RegistrationSuccessPage.tsx";
+import Unauthorized from "./pages/Unauthorized.tsx";
 
 const App = () => {
     return (
@@ -32,6 +33,7 @@ const MainLayout = () => {
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/registration-success" element={<RegistrationSuccessPage />} />
 
+                <Route path="/unauthorized" element={<Unauthorized />} />
                 {/* Protected Routes */}
                 <Route
                     path="/files"

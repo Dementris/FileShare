@@ -33,10 +33,11 @@ class FilesService:
     async def get_files(self, user: UserSchema):
         if user.role is Roles.ADMIN:
             files = await self._file_repository.get_all_files()
-            return [FileResponseSchema(**file.model_dump()) for file in files]
         else:
             files = await self._file_repository.get_files_by_user_access(user.id)
+        if (files):
             return [FileResponseSchema(**file.model_dump()) for file in files]
+
 
     async def give_permissions(self, file_id, user_id):
         user = await self._user_repository.get_user_by_id(user_id)
@@ -75,3 +76,14 @@ class FilesService:
         if not temp_file:
             raise HTTPException(status_code=404, detail='File not found')
         return temp_file
+
+    async def get_users_with_permission(self, file_id):
+        users = await self._file_repository.get_users_by_file(file_id)
+        return users
+
+    async def delete_file(self, file_id):
+        file = await self._file_repository.get_file_by_id(file_id)
+        if not file:
+            raise HTTPException(status_code=404, detail='File not found')
+
+        await self._file_repository.set_deleted(file_id)

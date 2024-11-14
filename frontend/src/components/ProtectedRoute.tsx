@@ -1,45 +1,81 @@
-// src/components/ProtectedRoute.tsx
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Navigate} from 'react-router-dom';
 import {jwtDecode} from 'jwt-decode';
-
-interface ProtectedRouteProps {
-    children: JSX.Element;
-    requiredRole: 'U' | 'A';
-}
+import axios from 'axios';
+import {CircularProgress} from "@mui/material";
 
 interface TokenPayload {
     exp: number;
-    role: 'U' | 'A';
+    role: string;
 }
+
+interface ProtectedRouteProps {
+    children: JSX.Element;
+    requiredRole: 'A' | 'U';
+}
+
 
 const isTokenExpired = (token: string): boolean => {
     try {
         const {exp} = jwtDecode<TokenPayload>(token);
-        return Date.now() >= exp * 1000; // exp is in seconds; convert to milliseconds
+        return Date.now() >= exp * 1000; // `exp` is in seconds; convert to milliseconds
     } catch (error) {
         console.error("Token decoding failed", error);
         return true;
     }
 };
 
+
+const refreshToken = async (): Promise<string | null> => {
+    try {
+        const response = await axios.post('/api/v1/refresh', {}, {withCredentials: true});
+        const {data} = response.data.accessToken;
+        localStorage.setItem('accessToken', data.accessToken);
+        localStorage.setItem('refreshToken', data.refreshToken);
+        return data;
+    } catch (error) {
+        console.error("Token refresh failed", error);
+        return null;
+    }
+};
+
+
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({children, requiredRole}) => {
-    const token = localStorage.getItem('accessToken');
+    const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
 
-    if (!token || isTokenExpired(token)) {
-        localStorage.removeItem('accessToken'); // Clear any expired tokens
-        localStorage.removeItem('role');
-        return <Navigate to="/login"/>;
+    useEffect(() => {
+        const checkToken = async () => {
+            let token = localStorage.getItem('accessToken');
+
+            if (!token || isTokenExpired(token)) {
+                token = await refreshToken();
+                if (!token) {
+                    localStorage.removeItem('accessToken');
+                    localStorage.removeItem('refreshToken');
+                    localStorage.removeItem('role');
+                    setIsAuthorized(false);
+                    return;
+                }
+            }
+
+            const {role: decodedRole} = jwtDecode<TokenPayload>(token);
+            if (
+                (requiredRole === 'U' && (decodedRole === 'A' || decodedRole === 'U')) ||
+                (requiredRole === 'A' && decodedRole === 'A')
+            ) {
+                setIsAuthorized(true);
+            } else {
+                setIsAuthorized(false);
+            }
+        };
+        checkToken();
+    }, [requiredRole]);
+
+    if (isAuthorized === null) {
+        return <CircularProgress />;
     }
 
-    const {role: decodedRole} = jwtDecode<TokenPayload>(token);
-    if (
-        (requiredRole === 'U' && (decodedRole === 'A' || decodedRole === 'U')) ||
-        (requiredRole === 'A' && decodedRole === 'A')
-    ) {
-        return children;
-    }
-    return <Navigate to="/unauthorized"/>;
+    return isAuthorized ? children : <Navigate to={!isAuthorized ? "/unauthorized" : "/login"}/>;
 };
 
 export default ProtectedRoute;
