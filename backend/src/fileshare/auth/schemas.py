@@ -45,3 +45,8 @@ class UserResponseSchema(FileShareBase):
 
 class UserLoginResponseSchema(UserResponseSchema):
     token: TokenResponseSchema
+
+class UserWithFileAccessSchema(FileShareBase):
+    id: int
+    username: str
+    email: EmailStr

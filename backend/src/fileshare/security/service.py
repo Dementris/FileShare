@@ -18,7 +18,7 @@ class JwtSecurityService:
         await self._jwt_repository.create(TokenInDbSchema(**payload.model_dump()))
         refresh_token, payload = create_token(user, refresh=True)
         await self._jwt_repository.create(TokenInDbSchema(**payload.model_dump()))
-        return TokenResponseSchema(access_token=access_token, refresh_token=refresh_token)
+        return TokenResponseSchema(accessToken=access_token, refreshToken=refresh_token)
 
     async def validate_token(self, token) -> TokenSchema:
         jwt = decode_token(token)

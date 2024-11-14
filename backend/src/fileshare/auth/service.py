@@ -35,6 +35,14 @@ class UserService:
             raise HTTPException(status_code=404, detail='User not found')
         return UserResponseSchema.model_validate(user)
 
+    async def get_user_with_permission(self, file_id):
+        users = await self._repository.get_users_with_permission(file_id)
+        return users
+
+    async def get_user_without_permission(self, file_id):
+        users = await self._repository.get_users_without_permission(file_id)
+        return users
+
 
 class AuthService:
     def __init__(self, repository: Annotated[UserRepository, Depends()],

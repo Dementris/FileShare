@@ -1,9 +1,11 @@
 from datetime import datetime
 
+from uuid import UUID
+
 from pydantic import Field, AliasChoices, computed_field
 
 from fileshare.auth.constants import Roles
-from fileshare.auth.schemas import UserSchema, UserResponseSchema
+from fileshare.auth.schemas import UserSchema
 from fileshare.files.constants import Permissions
 from fileshare.schemas import FileShareBase
 
@@ -27,11 +29,13 @@ class FileSchema(FileShareBase):
     def type(self):
         return self.name.split(".")[-1]
 
+
 class FileOwnerResponseSchema(FileShareBase):
     id: int
     username: str
     email: str
     role: Roles
+
 
 class FileResponseSchema(FileShareBase):
     id: int
@@ -51,7 +55,25 @@ class FileIn(FileShareBase):
     size: int
     owner_id: int
 
+    content: bytes = Field(exclude=True)
+
     @computed_field(return_type=str)
     @property
     def type(self):
         return self.name.split(".")[-1]
+
+
+class TempFileInSchema(FileShareBase):
+    temp_file_path: str
+    file_id: int
+
+class FileOutput(FileShareBase):
+    name: str
+    content_type: str
+
+
+class TempFileSchema(FileShareBase):
+    id: UUID
+    temp_file_path: str
+    file_id: int
+    file: FileOutput

@@ -1,6 +1,7 @@
 from typing import List
 
 from sqlalchemy import insert, select
+from sqlalchemy.orm import selectinload
 
 from fileshare.auth.models import User
 from fileshare.auth.schemas import UserSchema, UserCreateSchema
@@ -38,6 +39,20 @@ class UserRepository:
 
     async def get_users(self) -> List[UserSchema] | None:
         stmt = select(self._model).order_by(self._model.id)
+        result = await self._session.execute(stmt)
+        users = result.scalars().all()
+        return [UserSchema.model_validate(user) for user in users] if users else None
+
+    async def get_users_with_permission(self, file_id):
+        stmt = (select(self._model).where(self._model.shared_files.any(id=file_id))
+                .options(selectinload(self._model.shared_files)))
+        result = await self._session.execute(stmt)
+        users = result.scalars().all()
+        return [UserSchema.model_validate(user) for user in users] if users else None
+
+    async def get_users_without_permission(self, file_id):
+        stmt = (select(self._model).where(~self._model.shared_files.any(id=file_id))
+                .options(selectinload(self._model.shared_files)))
         result = await self._session.execute(stmt)
         users = result.scalars().all()
         return [UserSchema.model_validate(user) for user in users] if users else None
