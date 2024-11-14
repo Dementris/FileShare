@@ -81,24 +81,25 @@ const FileDashboard: React.FC = () => {
         fetchFiles();
     }, []);
 
-    // Handle file download
     const handleDownload = async (fileId: number) => {
         try {
-            const response = await api.get(`/files/download/${fileId}`, {
-                responseType: 'blob',
-            });
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `${fileId}`);
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
+            const response = await api.get(`/files/download/${fileId}`);
+            if (response.status === 200) {
+                const link = document.createElement('a');
+                link.href = response.data.downloadUrl;
+                link.setAttribute('download', "" );
+                document.body.appendChild(link);
+                link.click();
+
+                // Clean up
+                link.remove();
+            } else {
+                console.error('File download failed:', response.status);
+            }
         } catch (error) {
             console.error('Error downloading file:', error);
         }
     };
-
     if (loading) {
         return (
             <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
@@ -106,7 +107,6 @@ const FileDashboard: React.FC = () => {
             </Box>
         );
     }
-
 
 
     return (
@@ -120,15 +120,15 @@ const FileDashboard: React.FC = () => {
                         <Card>
                             <CardActions style={{justifyContent: 'flex-end'}}>
                                 {role === 'admin' && (
-                                <IconButton size="small" variant="delete" sx={{
-                                    color: '#f44336', // Red color
-                                    backgroundColor: 'rgba(244, 67, 54, 0.1)',
-                                    '&:hover': {
-                                        backgroundColor: 'rgba(244, 67, 54, 0.2)',
-                                    },
-                                }}>
-                                    <DeleteIcon fontSize="medium"/>
-                                </IconButton>)}
+                                    <IconButton size="small" variant="delete" sx={{
+                                        color: '#f44336', // Red color
+                                        backgroundColor: 'rgba(244, 67, 54, 0.1)',
+                                        '&:hover': {
+                                            backgroundColor: 'rgba(244, 67, 54, 0.2)',
+                                        },
+                                    }}>
+                                        <DeleteIcon fontSize="medium"/>
+                                    </IconButton>)}
                             </CardActions>
                             <CardContent>
                                 {/* Display file icon based on type */}

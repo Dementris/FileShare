@@ -1,7 +1,8 @@
+import uuid
 from datetime import datetime
 from typing import List
 
-from sqlalchemy import DateTime, func, ForeignKey, Table
+from sqlalchemy import DateTime, func, ForeignKey, Table, UUID
 from sqlalchemy.orm import Mapped, relationship
 from sqlalchemy.testing.schema import mapped_column, Column
 
@@ -34,3 +35,13 @@ class File(Base):
     owner: Mapped["User"] = relationship("User", back_populates="files")  # noqa
     user_with_access: Mapped[List["User"]] = relationship("User", secondary="files_permissions", # noqa
                                                           back_populates="shared_files")
+
+    temp_files: Mapped[List["TempFile"]] = relationship("TempFile", back_populates="file")
+
+class TempFile(Base):
+    __tablename__ = 'temp_files'
+    id: Mapped[str] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    temp_file_path: Mapped[str] = mapped_column(nullable=False)
+    file_id: Mapped[int] = mapped_column(ForeignKey('files.id'), nullable=False)
+
+    file: Mapped["File"] = relationship("File", back_populates="temp_files")

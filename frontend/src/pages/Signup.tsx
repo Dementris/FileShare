@@ -13,8 +13,8 @@ const Signup: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await api.post('/signup', { email, username, password });
-            navigate('/login');
+            await api.post('/users/create_user', { email, username, password });
+            navigate('/registration-success');
         } catch (error) {
             console.error('Signup failed', error);
         }

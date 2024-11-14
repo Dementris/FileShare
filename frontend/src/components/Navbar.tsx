@@ -3,11 +3,18 @@ import React, {useEffect, useState} from 'react';
 import {AppBar, Toolbar, Button, Typography, Box, CircularProgress} from '@mui/material';
 import {Link} from 'react-router-dom';
 import api from "../api/api.ts";
+import FileUploadPopup from "./FileUploadPopUp.tsx";
 
 
 const Navbar: React.FC = () => {
     const [userInfo, setUserInfo] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+
+
+    const [open, setOpen] = useState(false);
+
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
 
 
     useEffect(() => {
@@ -57,6 +64,13 @@ const Navbar: React.FC = () => {
                         >
                             Admin Panel
                         </Button>
+                    </Box>
+                ) && (
+                    <Box>
+                        <Button variant="contained" color="primary" onClick={handleOpen}>
+                            Upload File
+                        </Button>
+                        <FileUploadPopup open={open} onClose={handleClose}/>
                     </Box>
                 )}
                 {userInfo && (

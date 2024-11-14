@@ -7,6 +7,7 @@ import Main from "./pages/Main.tsx";
 import Signup from "./pages/Signup.tsx";
 import Navbar from "./components/Navbar.tsx";
 import FilesPage from "./pages/FilesPage.tsx";
+import RegistrationSuccessPage from "./pages/RegistrationSuccessPage.tsx";
 
 const App = () => {
     return (
@@ -18,7 +19,7 @@ const App = () => {
 
 const MainLayout = () => {
     const location = useLocation();
-    const hideNavbarPaths = ['/', '/login', '/signup'];
+    const hideNavbarPaths = ['/', '/login', '/signup', '/registration-success'];
     const shouldShowNavbar = !hideNavbarPaths.includes(location.pathname);
 
     return (
@@ -27,7 +28,9 @@ const MainLayout = () => {
             <Routes>
                 <Route path="/" element={<Main />} />
                 <Route path="/login" element={<Login />} />
+
                 <Route path="/signup" element={<Signup />} />
+                <Route path="/registration-success" element={<RegistrationSuccessPage />} />
 
                 {/* Protected Routes */}
                 <Route

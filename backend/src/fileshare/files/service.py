@@ -6,8 +6,8 @@ from fastapi.params import Depends
 from fileshare.auth.constants import Roles
 from fileshare.auth.repositories import UserRepository
 from fileshare.auth.schemas import UserSchema
-from fileshare.files.repositories import FilesRepository, FilePermissionsRepository
-from fileshare.files.schemas import FileIn, FileResponseSchema
+from fileshare.files.repositories import FilesRepository, FilePermissionsRepository, TempFileRepository
+from fileshare.files.schemas import FileIn, FileResponseSchema, TempFileInSchema, TempFileSchema
 from fileshare.storage.core import FileStorage
 
 
@@ -16,11 +16,13 @@ class FilesService:
                  repository: Annotated[FilesRepository, Depends()],
                  storage: Annotated[FileStorage, Depends()],
                  user_repository: Annotated[UserRepository, Depends()],
-                 permissions_repository: Annotated[FilePermissionsRepository, Depends()]):
+                 permissions_repository: Annotated[FilePermissionsRepository, Depends()],
+                 temp_file_repository: Annotated[TempFileRepository, Depends()], ):
         self._file_repository = repository
         self._permissions_repository = permissions_repository
         self._storage = storage
         self._user_repository = user_repository
+        self._temp_file_repository = temp_file_repository
 
     async def upload_file(self, file: FileIn):
         file.location = self._storage.save_file(file.content).__str__()
@@ -61,7 +63,15 @@ class FilesService:
             file = await self._file_repository.get_file_by_id_and_user(file_id, user.id)
         if not file:
             raise HTTPException(status_code=404, detail='File not found or you do not have permission')
-        path = self._storage.get_file(file.location)
-        if not path:
+        temp_path = self._storage.get_file(file.location)
+        if not temp_path:
             raise HTTPException(status_code=404, detail='File not found')
-        return file, path
+        temp_file_id = await self._temp_file_repository.create_temp_file(
+            TempFileInSchema(temp_file_path=temp_path.__str__(), file_id=file_id))
+        return temp_file_id
+
+    async def get_temp_file(self, temp_file) -> TempFileSchema:
+        temp_file = await self._temp_file_repository.get_temp_file_by_id(temp_file)
+        if not temp_file:
+            raise HTTPException(status_code=404, detail='File not found')
+        return temp_file

@@ -26,6 +26,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],  # Allow all methods (GET, POST, etc.)
     allow_headers=["*"],  # Allow all headers
+    expose_headers=["Content-Disposition"],
 )
 
 app.include_router(auth_router, prefix="/auth", tags=["auth"])

@@ -1,19 +1,16 @@
 from datetime import datetime, timezone
 from typing import List
+from uuid import UUID
 
 from pydantic_core.core_schema import model_schema
 from sqlalchemy import insert, select, delete, literal, literal_column, CHAR, case
 from sqlalchemy.orm import selectinload, lazyload, joinedload, subqueryload
-from sqlalchemy.testing.plugin.plugin_base import options
-from tomlkit import value
 
-from fileshare.auth.constants import Roles
-from fileshare.auth.models import User
 from fileshare.database.core import DBSession
 from fileshare.files.constants import Permissions
-from fileshare.files.models import File, files_permissions
-from fileshare.files.schemas import FileIn, FileSchema
-from sqlalchemy.orm import Load
+from fileshare.files.models import File, files_permissions, TempFile
+from fileshare.files.schemas import FileIn, FileSchema, TempFileInSchema, TempFileSchema
+
 
 
 class FilesRepository:
@@ -92,3 +89,21 @@ class FilePermissionsRepository:
             (file_id == self._model.c.file_id) & (self._model.c.user_id == user_id))  # noqa
         await self._session.execute(stmt)
         await self._session.commit()
+
+class TempFileRepository:
+    def __init__(self, session: DBSession):
+        self._session = session
+        self._model = TempFile
+
+    async def create_temp_file(self, temp_file: TempFileInSchema):
+        stmt = insert(self._model).values(**temp_file.model_dump()).returning(self._model.id)
+        result = await self._session.execute(stmt)
+        await self._session.commit()
+        return result.scalar_one()
+
+    async def get_temp_file_by_id(self, id: UUID) -> TempFileSchema:
+        stmt = select(self._model).where(self._model.id == id).options(selectinload(self._model.file))
+        result = await self._session.execute(stmt)
+        temp_file = result.scalar_one_or_none()
+        return TempFileSchema.model_validate(temp_file) if temp_file else None
+
