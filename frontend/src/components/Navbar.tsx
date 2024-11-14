@@ -1,7 +1,7 @@
 // src/components/Navbar.tsx
 import React, {useEffect, useState} from 'react';
-import {AppBar, Toolbar, Button, Typography, Box, CircularProgress} from '@mui/material';
-import {Link} from 'react-router-dom';
+import {AppBar, Box, Button, CircularProgress, Toolbar, Typography} from '@mui/material';
+import {Link, Navigate, useNavigate} from 'react-router-dom';
 import api from "../api/api.ts";
 import FileUploadPopup from "./FileUploadPopUp.tsx";
 
@@ -15,6 +15,19 @@ const Navbar: React.FC = () => {
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+
+    const handleLogout = async () => {
+        const response = await api.get("auth/logout")
+        localStorage.removeItem("accessToke")
+        localStorage.removeItem("refreshToken")
+        if (response.status === 401){
+            console.log("Error logout")
+            return <Navigate to={"/unauthorized"}/>
+        }
+        else {
+            window.location.replace("/")
+        }
+    }
 
 
     useEffect(() => {
@@ -91,6 +104,14 @@ const Navbar: React.FC = () => {
                         </Box>
                     </Box>
                 )}
+                <Box>
+                    <Button
+                        color="inherit"
+                        onClick={handleLogout}
+                        sx={{textTransform: 'none', marginRight: 2}}>
+                        Logout
+                    </Button>
+                </Box>
 
             </Toolbar>
         </AppBar>

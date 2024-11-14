@@ -1,0 +1,15 @@
+services:
+  api:
+    build:
+      dockerfile: backend/Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env.development
+  app:
+    build:
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "80:3000"
+    env_file:
+      - .env.development

@@ -63,6 +63,8 @@ const UserPermissionPopup: React.FC<PopupProps> = ({open, onClose, fileId}) => {
 
     const handleDeletePermission = async (userId: number) => {
         const response = await api.delete(`/files/permissions/${fileId}/${userId}`);
+        await fetchUsers();
+        await fetchNotUsers()
         if (response.status == 403){
             console.error("Error deleting permission")
         }
