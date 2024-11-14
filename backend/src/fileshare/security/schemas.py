@@ -31,5 +31,5 @@ class TokenSchema(TokenInDbSchema):
 
 
 class TokenResponseSchema(FileShareBase):
-    access_token: str
-    refresh_token: str
+    accessToken: str
+    refreshToken: str

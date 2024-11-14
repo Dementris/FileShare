@@ -4,13 +4,10 @@ from backend.src.fileshare.constants import Environment
 
 
 class Config(BaseSettings):
-    DATABASE_URL: str
-
+    BASE_URL: str = "http://127.0.0.1:8000/api/v1"
     ENVIRONMENT: Environment = Environment.PRODUCTION
 
-    CORS_ORIGINS: list[str]
     CORS_ORIGINS_REGEX: str | None = None
-    CORS_HEADERS: list[str]
 
     APP_VERSION: str = "1.0"
 
