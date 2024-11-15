@@ -18,7 +18,7 @@ class TokenRepository:
         stmt = insert(self._model).values(**token.model_dump())
         result = await self._session.execute(stmt)
         await self._session.commit()
-        return result.scalar_one()
+        return result.inserted_primary_key[0]
 
     async def revoke_all_not_expired_by_user(self, user_id):
         stmt = (update(self._model)

@@ -17,7 +17,7 @@ class UserRepository:
         stmt = insert(self._model).values(**data.model_dump())
         result = await self._session.execute(stmt)
         await self._session.commit()
-        return result.scalar_one()
+        return result.inserted_primary_key[0]
 
     async def get_user_by_email(self, email: str) -> UserSchema | None:
         stmt = select(self._model).where(self._model.email == email)
