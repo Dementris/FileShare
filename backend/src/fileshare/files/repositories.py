@@ -20,7 +20,7 @@ class FilesRepository:
         self._model = File
 
     async def create(self, file: FileIn) -> int:
-        stmt = insert(self._model).values(**file.model_dump()).returning(self._model.id)
+        stmt = insert(self._model).values(**file.model_dump())
         result = await self._session.execute(stmt)
         await self._session.commit()
         return result.scalar_one()
@@ -98,7 +98,7 @@ class FilePermissionsRepository:
         return permissions
 
     async def add_permission_to_user(self, file_id, user_id):
-        stmt = insert(self._model).values(file_id=file_id, user_id=user_id).returning(self._model.c.file_id)
+        stmt = insert(self._model).values(file_id=file_id, user_id=user_id)
         await self._session.execute(stmt)
         await self._session.commit()
 
@@ -115,7 +115,7 @@ class TempFileRepository:
         self._model = TempFile
 
     async def create_temp_file(self, temp_file: TempFileInSchema):
-        stmt = insert(self._model).values(**temp_file.model_dump()).returning(self._model.id)
+        stmt = insert(self._model).values(**temp_file.model_dump())
         result = await self._session.execute(stmt)
         await self._session.commit()
         return result.scalar_one()
