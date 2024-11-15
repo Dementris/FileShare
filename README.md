@@ -14,3 +14,13 @@ cd FileShare
 ```shell
 docker-compose up --build
 ```
+
+### Admin credentials
+```shell
+Login: admin@admin.com
+Pasworsd: admin
+```
+
+**_Backend:_**: https://file-share-api-f5bfb26d06d7.herokuapp.com/docs
+
+**_Frontend_**: https://fileshare-g7py.onrender.com/
