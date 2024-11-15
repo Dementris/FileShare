@@ -18,6 +18,6 @@ COPY --from=build /usr/src/app/nginx.conf /etc/nginx/conf.d
 
 COPY --from=build /usr/src/app/dist /usr/share/nginx/html
 
-EXPOSE 3000
+EXPOSE $PORT
 
 ENTRYPOINT nginx -g 'daemon off;'
