@@ -31,9 +31,9 @@ class TokenRepository:
                 .values(revoked=True))
         result = await self._session.execute(stmt)
         await self._session.commit()
-        return result.scalars().all()
+        return result.rowcount
 
-    async def get_by_id(self, token_id: UUID):
+    async def get_by_id(self, token_id: str):
         stmt = select(self._model).where(self._model.id == token_id)
         result = await self._session.execute(stmt)
         token = result.scalar_one_or_none()

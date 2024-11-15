@@ -14,7 +14,6 @@ class DatabaseSessionManager:
     def __init__(self):
         self.engine: AsyncEngine | None = create_async_engine(settings.DATABASE_URL,
                                                               future=True,
-                                                              echo=True,
                                                               execution_options={
                                                                   "supports_sane_rowcount_returning": False,
                                                                   "supports_native_upsert": False,

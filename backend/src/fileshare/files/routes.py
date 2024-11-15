@@ -42,7 +42,7 @@ async def download_file(file_id: Annotated[int, "File id"],
 
 
 @file_router.get("/link/{temp_file}")
-async def download_link(temp_file: UUID, service: FilesService):
+async def download_link(temp_file: str, service: FilesService):
     tem_file = await service.get_temp_file(temp_file)
     path = tem_file.temp_file_path
     def iter_file():
@@ -68,6 +68,6 @@ async def upload_file(files: list[UploadFile], user: Annotated[UserSchema, Admin
 
     return {"massage": f"Files successfully uploaded"}
 
-@file_router.delete("/{file_id}", status_code=204)
+@file_router.delete("/{file_id}", status_code=204, dependencies=[AdminPermissionDependency])
 async def delete_file(file_id: int, service: FilesService):
     await service.delete_file(file_id)

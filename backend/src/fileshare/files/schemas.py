@@ -73,7 +73,7 @@ class FileOutput(FileShareBase):
 
 
 class TempFileSchema(FileShareBase):
-    id: UUID
+    id: str
     temp_file_path: str
     file_id: int
     file: FileOutput

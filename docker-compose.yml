@@ -1,5 +1,7 @@
 services:
   backend:
+    depends_on:
+      - db
     build:
       context: backend
       dockerfile: Dockerfile
@@ -31,5 +33,6 @@ services:
       MYSQL_PASSWORD: 'password'
       MYSQL_ROOT_PASSWORD: password
     command: --skip-ssl --explicit_defaults_for_timestamp
+
 
 volumes: {}

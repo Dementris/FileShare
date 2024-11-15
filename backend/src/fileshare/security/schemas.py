@@ -7,7 +7,7 @@ from fileshare.schemas import FileShareBase
 
 
 class TokenInDbSchema(FileShareBase):
-    id: UUID = Field(validation_alias=AliasChoices("id","jti"))
+    id: str = Field(validation_alias=AliasChoices("id","jti"))
     user_id: int = Field(validation_alias=AliasChoices("user_id","sub"))
     expires_at: datetime = Field(validation_alias=AliasChoices("expires_at","exp"))
     revoked: bool = False

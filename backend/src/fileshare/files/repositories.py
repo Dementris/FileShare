@@ -118,9 +118,9 @@ class TempFileRepository:
         stmt = insert(self._model).values(**temp_file.model_dump())
         result = await self._session.execute(stmt)
         await self._session.commit()
-        return result.scalar_one()
+        return result.inserted_primary_key[0]
 
-    async def get_temp_file_by_id(self, id: UUID) -> TempFileSchema:
+    async def get_temp_file_by_id(self, id: str) -> TempFileSchema:
         stmt = select(self._model).where(self._model.id == id).options(selectinload(self._model.file))
         result = await self._session.execute(stmt)
         temp_file = result.scalar_one_or_none()
