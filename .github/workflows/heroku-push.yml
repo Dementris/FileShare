@@ -26,14 +26,16 @@ jobs:
       uses: docker/build-push-action@v6.9.0
       with:
         push: true
-        file: backend/Dockerfile
+        context: backend
+        file: Dockerfile
         tags: registry.heroku.com/${{ secrets.HEROKU_APP_API_NAME }}/web
         
     - name: Build and push Frontend Docker images
       uses: docker/build-push-action@v6.9.0
       with:
         push: true
-        file: backend/Dockerfile
+        context: frontend
+        file: Dockerfile
         tags: registry.heroku.com/${{ secrets.HEROKU_APP_FRONTEND_NAME }}/web
       # Install Heroku CLI
     - name: Install Heroku CLI
