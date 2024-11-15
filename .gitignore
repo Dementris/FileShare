@@ -164,7 +164,7 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 .idea/
 
-backend/test.db
+
 ### NextJS template
 # dependencies
 /node_modules
@@ -205,5 +205,4 @@ next-env.d.ts
 
 !/backend/.env.development
 !/frontend/.env
-!/backend/test.db
-/backend/src/fileshare/database/alembic/versions/**
+
