@@ -23,7 +23,7 @@ class FilesRepository:
         stmt = insert(self._model).values(**file.model_dump())
         result = await self._session.execute(stmt)
         await self._session.commit()
-        return result.scalar_one()
+        return result.inserted_primary_key[0]
 
     async def get_all_files(self) -> List[FileSchema] | None:
         stmt = (select(self._model)
