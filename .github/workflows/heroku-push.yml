@@ -29,14 +29,7 @@ jobs:
         context: ./backend
         file: ./backend/Dockerfile
         tags: registry.heroku.com/${{ secrets.HEROKU_APP_API_NAME }}/web
-        
-    - name: Build and push Frontend Docker images
-      uses: docker/build-push-action@v6.9.0
-      with:
-        push: true
-        context: ./frontend
-        file: ./frontend/Dockerfile
-        tags: registry.heroku.com/${{ secrets.HEROKU_APP_FRONTEND_NAME }}/web
+
       # Install Heroku CLI
     - name: Install Heroku CLI
       run: curl https://cli-assets.heroku.com/install.sh | sh
@@ -56,6 +49,5 @@ jobs:
     # Step: Release the app using the Heroku API
     - name: Release the image
       run: |
-        heroku container:release web --app ${{ secrets.HEROKU_APP_API_NAME }} |
-        heroku container:release web --app ${{ secrets.HEROKU_APP_FRONTEND_NAME }}
+        heroku container:release web --app ${{ secrets.HEROKU_APP_API_NAME }}
 
