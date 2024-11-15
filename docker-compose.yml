@@ -5,6 +5,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
+    environment:
+      - PORT=8000
     env_file:
       - "backend/.env.development"
     volumes:
@@ -16,5 +18,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "80:80"
+    environment:
+      - PORT=80
 
 volumes: {}

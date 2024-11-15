@@ -20,4 +20,4 @@ COPY --from=build /usr/src/app/dist /usr/share/nginx/html
 
 EXPOSE $PORT
 
-ENTRYPOINT nginx -g 'daemon off;'
+ENTRYPOINT ["/usr/src/app/start-nginx.sh"]
