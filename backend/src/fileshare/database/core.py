@@ -12,7 +12,14 @@ Base = declarative_base()
 
 class DatabaseSessionManager:
     def __init__(self):
-        self.engine: AsyncEngine | None = create_async_engine(settings.DATABASE_URL)
+        self.engine: AsyncEngine | None = create_async_engine(settings.DATABASE_URL,
+                                                              future=True,
+                                                              echo=True,
+                                                              execution_options={
+                                                                  "supports_sane_rowcount_returning": False,
+                                                                  "supports_native_upsert": False,
+                                                              }
+                                                              )
         self._sessionmaker: async_sessionmaker | None = async_sessionmaker(autocommit=False, bind=self.engine)
 
     def init(self, host: str):
@@ -41,6 +48,7 @@ class DatabaseSessionManager:
 
 
 sessionmanager = DatabaseSessionManager()
+
 
 async def get_db():
     async with sessionmanager.session() as session:
