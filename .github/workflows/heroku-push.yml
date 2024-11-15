@@ -3,15 +3,11 @@ name: Docker Image CI Dev
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    types: 
-      - closed
-    branches: [ "main" ]
+
 
 jobs:
 
   build:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
