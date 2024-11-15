@@ -206,3 +206,4 @@ next-env.d.ts
 !/backend/.env.development
 !/frontend/.env
 !/backend/test.db
+/backend/src/fileshare/database/alembic/versions/**

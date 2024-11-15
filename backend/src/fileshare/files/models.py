@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 from typing import List
 
-from sqlalchemy import DateTime, func, ForeignKey, Table, UUID
+from sqlalchemy import DateTime, func, ForeignKey, Table, UUID, String, CHAR
 from sqlalchemy.orm import Mapped, relationship
 from sqlalchemy.testing.schema import mapped_column, Column
 
@@ -19,10 +19,10 @@ files_permissions = Table(
 class File(Base):
     __tablename__ = 'files'
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    name: Mapped[str] = mapped_column(nullable=False, index=True)
-    content_type: Mapped[str] = mapped_column(nullable=False)
-    type: Mapped[str] = mapped_column(nullable=False, index=True)
-    location: Mapped[str] = mapped_column(nullable=False, index=True)
+    name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
+    content_type: Mapped[str] = mapped_column(String(255), nullable=False)
+    type: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
+    location: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     size: Mapped[int] = mapped_column()
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
@@ -40,8 +40,8 @@ class File(Base):
 
 class TempFile(Base):
     __tablename__ = 'temp_files'
-    id: Mapped[str] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    temp_file_path: Mapped[str] = mapped_column(nullable=False)
+    id: Mapped[str] = mapped_column(CHAR(36), primary_key=True, default=uuid.uuid4)
+    temp_file_path: Mapped[str] = mapped_column(String(300), nullable=False)
     file_id: Mapped[int] = mapped_column(ForeignKey('files.id'), nullable=False)
 
     file: Mapped["File"] = relationship("File", back_populates="temp_files")
