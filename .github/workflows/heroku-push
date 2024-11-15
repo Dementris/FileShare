@@ -2,11 +2,11 @@ name: Docker Image CI Dev
 
 on:
   push:
-    branches: [ "heroku-app" ]
+    branches: [ "main" ]
   pull_request:
     types: 
       - closed
-    branches: [ "heroku-app" ]
+    branches: [ "main" ]
 
 jobs:
 
