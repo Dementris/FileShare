@@ -14,7 +14,7 @@ class UserRepository:
         self._model = User
 
     async def create(self, data: UserCreateSchema) -> int:
-        stmt = insert(self._model).values(**data.model_dump()).returning(self._model.id)
+        stmt = insert(self._model).values(**data.model_dump())
         result = await self._session.execute(stmt)
         await self._session.commit()
         return result.scalar_one()

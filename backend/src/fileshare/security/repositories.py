@@ -15,7 +15,7 @@ class TokenRepository:
         self._model = Token
 
     async def create(self, token: TokenInDbSchema):
-        stmt = insert(self._model).values(**token.model_dump()).returning(self._model.id)
+        stmt = insert(self._model).values(**token.model_dump())
         result = await self._session.execute(stmt)
         await self._session.commit()
         return result.scalar_one()
@@ -28,8 +28,7 @@ class TokenRepository:
                     (self._model.expires_at >= datetime.now(timezone.utc).replace(tzinfo=None)) &
                     (~self._model.revoked)
                 )
-                .values(revoked=True)
-                .returning(self._model.id))
+                .values(revoked=True))
         result = await self._session.execute(stmt)
         await self._session.commit()
         return result.scalars().all()
