@@ -1,0 +1,58 @@
+name: Docker Image CI Dev
+
+on:
+  push:
+    branches: [ "heroku-app" ]
+  pull_request:
+    types: 
+      - closed
+    branches: [ "heroku-app" ]
+
+jobs:
+
+  build:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Docker Login
+      uses: docker/login-action@v3.3.0
+      with:
+        registry: registry.heroku.com
+        username: __token__ 
+        password: ${{ secrets.HEROKU_API_KEY }}
+
+    - name: Build and push API Docker images
+      uses: docker/build-push-action@v6.9.0
+      with:
+        push: true
+        file: backend/Dockerfile
+        tags: registry.heroku.com/${{ secrets.HEROKU_APP_API_NAME }}/web
+        
+    - name: Build and push Frontend Docker images
+      uses: docker/build-push-action@v6.9.0
+      with:
+        push: true
+        file: backend/Dockerfile
+        tags: registry.heroku.com/${{ secrets.HEROKU_APP_FRONTEND_NAME }}/web
+      # Install Heroku CLI
+    - name: Install Heroku CLI
+      run: curl https://cli-assets.heroku.com/install.sh | sh
+
+      # Authenticate Heroku CLI
+    - name: Authenticate Heroku CLI
+      run: |
+        echo "machine api.heroku.com" >> ~/.netrc
+        echo "  login ${HEROKU_API_KEY}" >> ~/.netrc
+        echo "  password ${HEROKU_API_KEY}" >> ~/.netrc
+        echo "machine git.heroku.com" >> ~/.netrc
+        echo "  login ${HEROKU_API_KEY}" >> ~/.netrc
+        echo "  password ${HEROKU_API_KEY}" >> ~/.netrc
+      env:
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+
+    # Step: Release the app using the Heroku API
+    - name: Release the image
+      run: |
+        heroku container:release web --app ${{ secrets.HEROKU_APP_API_NAME }} |
+        heroku container:release web --app ${{ secrets.HEROKU_APP_FRONTEND_NAME }}
