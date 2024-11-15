@@ -1,7 +1,7 @@
 // src/components/Navbar.tsx
 import React, {useEffect, useState} from 'react';
 import {AppBar, Box, Button, CircularProgress, Toolbar, Typography} from '@mui/material';
-import {Link, Navigate, useNavigate} from 'react-router-dom';
+import {Link, Navigate} from 'react-router-dom';
 import api from "../api/api.ts";
 import FileUploadPopup from "./FileUploadPopUp.tsx";
 

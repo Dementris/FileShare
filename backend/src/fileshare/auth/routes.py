@@ -65,6 +65,6 @@ async def get_users_with_permission(file_id: int, service: UserService):
     return response
 
 @user_router.get("/permission/not/{file_id}", dependencies=[AdminPermissionDependency])
-async def get_users_with_permission(file_id: int, service: UserService):
+async def get_users_without_permission(file_id: int, service: UserService):
     response = await service.get_user_without_permission(file_id=file_id)
     return response

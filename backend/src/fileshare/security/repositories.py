@@ -2,7 +2,7 @@ from datetime import timezone
 from uuid import UUID
 
 from sqlalchemy import insert, select, update
-from win32ctypes.pywin32.pywintypes import datetime
+from datetime import datetime
 
 from fileshare.database.core import DBSession
 from fileshare.security.models import Token

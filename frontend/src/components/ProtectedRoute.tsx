@@ -28,7 +28,12 @@ const isTokenExpired = (token: string): boolean => {
 
 const refreshToken = async (): Promise<string | null> => {
     try {
-        const response = await axios.post('/api/v1/refresh', {}, {withCredentials: true});
+        const refreshToken = localStorage.getItem('refreshToken');
+        const response = await axios.get('/api/v1/refresh', {
+                        headers: {
+                            Authorization: `Bearer ${refreshToken}`,
+                        },
+                    });
         const {data} = response.data.accessToken;
         localStorage.setItem('accessToken', data.accessToken);
         localStorage.setItem('refreshToken', data.refreshToken);

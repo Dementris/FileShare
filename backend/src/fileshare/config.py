@@ -1,6 +1,6 @@
 from pydantic_settings import BaseSettings
 
-from backend.src.fileshare.constants import Environment
+from fileshare.constants import Environment
 
 
 class Config(BaseSettings):

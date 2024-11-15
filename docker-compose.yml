@@ -1,15 +1,14 @@
 services:
-  api:
+  backend:
     build:
-      dockerfile: backend/Dockerfile
+      context: backend
+      dockerfile: Dockerfile
     ports:
       - "8000:8000"
-    env_file:
-      - .env.development
-  app:
+
+  frontend:
     build:
-      dockerfile: frontend/Dockerfile
+      context: frontend
+      dockerfile: Dockerfile
     ports:
-      - "80:3000"
-    env_file:
-      - .env.development
+      - "80:80"

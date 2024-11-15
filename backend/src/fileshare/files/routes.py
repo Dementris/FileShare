@@ -33,10 +33,6 @@ async def remove_permissions(file_id: int, user_id: int, service: FilesService):
     await service.remove_permissions(file_id, user_id)
     return {"message": "Permissions removed from user {} ".format(user_id)}
 
-@file_router.get("/files/permissions/users/")
-async def users_with_permissions(file_id: int, service: FilesService):
-    return await service.get_users_with_permission(file_id)
-
 @file_router.get("/download/{file_id}")
 async def download_file(file_id: Annotated[int, "File id"],
                         user: Annotated[UserSchema, AuthenticatedPermissionsDependency],

@@ -1,24 +1,23 @@
 
-FROM node:22 AS builder
+FROM node:22 As build
 
-WORKDIR /app
+WORKDIR /usr/src/app
 
-COPY package*.json ./
+COPY package*.json package-lock.json ./
 
-RUN npm install
+RUN npm ci
 
-COPY . .
+COPY ./ ./
 
 RUN npm run build
 
-FROM nginx:alpine
 
-COPY --from=builder /app/dist /usr/share/nginx/html
+FROM nginx:stable-alpine as production
 
-RUN rm /etc/nginx/conf.d/default.conf
-COPY nginx.conf /etc/nginx/conf.d
+COPY --from=build /usr/src/app/nginx.conf /etc/nginx/conf.d
 
-EXPOSE 3000
+COPY --from=build /usr/src/app/dist /usr/share/nginx/html
 
-# Start Nginx
-CMD ["nginx", "-g", "daemon off;"]
+EXPOSE 80
+
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
