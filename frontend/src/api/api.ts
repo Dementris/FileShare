@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'http://localhost:8000/api/v1',
+    baseURL: import.meta.env.VITE_BACKEND_URL,
 });
 
 api.interceptors.request.use((config) => {
@@ -23,7 +23,7 @@ api.interceptors.response.use(
 
             if (refreshToken) {
                 try {
-                    const { data } = await axios.get('http://localhost:8000/api/v1/auth/refresh', {
+                    const { data } = await axios.get(import.meta.env.VITE_REFRESH_TOKEN_URL, {
                         headers: {
                             Authorization: `Bearer ${refreshToken}`,
                         },

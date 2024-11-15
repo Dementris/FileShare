@@ -1,3 +1,10 @@
+import os
+
+from dotenv import load_dotenv
+
+if os.environ.get('ENVIRONMENT') != 'production':
+    load_dotenv(".env.development")
+
 import asyncio
 from logging.config import fileConfig
 
@@ -9,11 +16,10 @@ from alembic import context
 
 from fileshare.database.core import Base
 
-from fileshare.auth.models import User # noqa
-from fileshare.security.models import Token # noqa
-from fileshare.files.models import files_permissions, File # noqa
+from fileshare.auth.models import User  # noqa
+from fileshare.security.models import Token  # noqa
+from fileshare.files.models import files_permissions, File  # noqa
 from fileshare.database.config import settings
-
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

@@ -11,6 +11,9 @@ import RegistrationSuccessPage from "./pages/RegistrationSuccessPage.tsx";
 import Unauthorized from "./pages/Unauthorized.tsx";
 
 const App = () => {
+    console.log(import.meta.env.VITE_APP_TITLE)
+    console.log(import.meta.env.VITE_BACKEND_URL)
+    console.log(import.meta.env.VITE_REFRESH_TOKEN_URL)
     return (
         <Router>
             <MainLayout />

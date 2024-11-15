@@ -13,7 +13,7 @@ class FileStorage:
     def get_file(self, file_path):
         file = self.path.joinpath(file_path)
         if file.is_file():
-            file_data = decrypt_content(file.read_bytes(), key=storage_settings.SECRET_KEY)
+            file_data = decrypt_content(file.read_bytes(), key=storage_settings.FERNET_SECRET_KEY)
             tmp_file = self.tmp_path.joinpath("dl"+name_generator())
             tmp_file.parent.mkdir(parents=True, exist_ok=True)
             tmp_file.write_bytes(file_data)
@@ -24,7 +24,7 @@ class FileStorage:
     def save_file(self, content):
         file_path = self.path.joinpath(name_generator())
         file_path.parent.mkdir(parents=True, exist_ok=True)
-        file_path.write_bytes(encrypt_content(content, key=storage_settings.SECRET_KEY))
+        file_path.write_bytes(encrypt_content(content, key=storage_settings.FERNET_SECRET_KEY))
         return file_path.relative_to(self.path)
 
     def delete_file(self, file_path):
