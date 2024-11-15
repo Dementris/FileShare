@@ -20,4 +20,6 @@ COPY --from=build /usr/src/app/dist /usr/share/nginx/html
 
 EXPOSE $PORT
 
+RUN chmod +x /usr/src/app/start-nginx.sh
+
 ENTRYPOINT ["/usr/src/app/start-nginx.sh"]
