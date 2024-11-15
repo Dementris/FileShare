@@ -17,6 +17,7 @@ import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import api from "../api/api.ts";
 import UserPermissionPopup from "../components/UserPermissionPopUp.tsx";
 import DeleteIcon from '@mui/icons-material/Delete';
+import {useNavigate} from "react-router-dom";
 
 interface File {
     id: number;
@@ -58,6 +59,7 @@ const FileDashboard: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [openPopup, setOpenPopup] = useState(false);
     const [selectedFileId, setSelectedFileId] = useState<number | null>(null);
+    const navigate = useNavigate();
 
     const handleOpenPopup = (fileId: number) => {
         setSelectedFileId(fileId);
@@ -110,7 +112,7 @@ const FileDashboard: React.FC = () => {
         try {
             const response = await api.delete(`files/${fileId}`)
             if (response.status === 204){
-                window.location.reload()
+                navigate("/files")
             }
         }catch (error){
             console.error('Error deleting file:', error);

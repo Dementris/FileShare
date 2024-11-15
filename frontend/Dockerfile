@@ -24,6 +24,6 @@ COPY --from=build /usr/src/app/start-nginx.sh /usr/share/nginx/
 
 RUN chmod +x /usr/share/nginx/start-nginx.sh
 
-EXPOSE $PORT
+EXPOSE 80
 
-ENTRYPOINT ["/usr/share/nginx/start-nginx.sh"]
+CMD ["nginx", "-g", "daemon off;"]

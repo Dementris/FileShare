@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import {useDropzone} from 'react-dropzone';
 import api from "../api/api.ts";
+import {useNavigate} from "react-router-dom";
 
 interface FileUploadPopupProps {
     open: boolean;
@@ -27,6 +28,7 @@ const FileUploadPopup: React.FC<FileUploadPopupProps> = ({open, onClose}) => {
         setFiles(acceptedFiles);
         setError(null);
     };
+    const navigate = useNavigate()
 
     const handleUpload = async () => {
         if (!files) {
@@ -46,7 +48,7 @@ const FileUploadPopup: React.FC<FileUploadPopupProps> = ({open, onClose}) => {
             });
             setLoading(false);
             onClose();
-            window.location.reload();
+            navigate("/files")
         } catch (err) {
             setLoading(false);
             setError('Failed to upload files. Please try again.');
